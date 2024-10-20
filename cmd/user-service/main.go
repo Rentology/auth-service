@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"user-service/internal/config"
@@ -17,6 +18,7 @@ func main() {
 	log := setupLogger(cfg.Env)
 	log.Info("starting user-service", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
+	fmt.Println(cfg)
 }
 
 func setupLogger(env string) *slog.Logger {

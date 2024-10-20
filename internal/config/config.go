@@ -8,15 +8,15 @@ import (
 )
 
 type Config struct {
-	Env         string     `yaml:"env" env-default:"local"`
-	DatabaseUrl string     `yaml:"database_url" env-required:"true"`
-	HttpServer  HTTPServer `yaml:"http_server" env-required:"true"`
+	Env         string        `yaml:"env" env-default:"local"`
+	DatabaseUrl string        `yaml:"database_url" env-required:"true"`
+	TokenTTL    time.Duration `yaml:"token_ttl" env-required:"true"`
+	GRPC        GRPCConfig    `yaml:"grpc" env-required:"true"`
 }
 
-type HTTPServer struct {
-	Address     string        `yaml:"address" env-default:"localhost:8080"`
-	Timeout     time.Duration `yaml:"timeout" env-default:"10s"`
-	IdleTimeout time.Duration `yaml:"idleTimeout" env-default:"60s"`
+type GRPCConfig struct {
+	Port    int           `yaml:"port"`
+	Timeout time.Duration `yaml:"timeout" env-default:"10s"`
 }
 
 func LoadConfig() *Config {
