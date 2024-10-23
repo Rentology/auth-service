@@ -1,9 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
+	"user-service/internal/app"
 	"user-service/internal/config"
 )
 
@@ -18,7 +20,21 @@ func main() {
 	log := setupLogger(cfg.Env)
 	log.Info("starting user-service", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
-	fmt.Println(cfg)
+
+	application := app.New(log, cfg.GRPC.Port, cfg.DatabaseUrl, cfg.TokenTTL)
+
+	go application.GRPCSrv.MustRun()
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+
+	sign := <-stop
+
+	log.Info("stopping application", slog.String("signal", os.Signal.String(sign)))
+
+	application.GRPCSrv.Stop()
+
+	log.Info("application stopped")
 }
 
 func setupLogger(env string) *slog.Logger {

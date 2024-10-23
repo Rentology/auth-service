@@ -1,5 +1,5 @@
 env: "local"
-database_url: "localhost:5432"
+database_url: "postgres://postgres:123@localhost:5432/postgres?sslmode=disable"
 token_ttl: 1h
 grpc:
   port: 8080
