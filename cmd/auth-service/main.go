@@ -1,12 +1,12 @@
 package main
 
 import (
+	"auth-service/internal/app"
+	"auth-service/internal/config"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
-	"user-service/internal/app"
-	"user-service/internal/config"
 )
 
 const (
@@ -18,7 +18,7 @@ const (
 func main() {
 	cfg := config.LoadConfig()
 	log := setupLogger(cfg.Env)
-	log.Info("starting user-service", slog.String("env", cfg.Env))
+	log.Info("starting auth-service", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
 
 	application := app.New(log, cfg.GRPC.Port, cfg.DatabaseUrl, cfg.TokenTTL)

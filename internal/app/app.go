@@ -1,12 +1,12 @@
 package app
 
 import (
+	grpcapp "auth-service/internal/app/grpc"
+	"auth-service/internal/repository"
+	"auth-service/internal/repository/postgres"
+	"auth-service/internal/services/auth"
 	"log/slog"
 	"time"
-	grpcapp "user-service/internal/app/grpc"
-	"user-service/internal/repository"
-	"user-service/internal/repository/postgres"
-	"user-service/internal/services/auth"
 )
 
 type App struct {

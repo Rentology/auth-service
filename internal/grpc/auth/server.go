@@ -1,11 +1,11 @@
 package auth
 
 import (
+	auth1 "auth-service/gen/go/auth"
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	auth1 "user-service/gen/go/auth"
 )
 
 type Auth interface {

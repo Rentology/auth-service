@@ -1,9 +1,9 @@
 package jwt
 
 import (
+	"auth-service/internal/domain/models"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
-	"user-service/internal/domain/models"
 )
 
 func NewToken(user models.User, app models.App, duration time.Duration) (string, error) {

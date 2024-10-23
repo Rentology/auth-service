@@ -1,13 +1,13 @@
 package repository
 
 import (
+	"auth-service/internal/domain/models"
+	"auth-service/internal/repository/postgres"
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgconn"
-	"user-service/internal/domain/models"
-	"user-service/internal/repository/postgres"
 )
 
 type UserRepository interface {

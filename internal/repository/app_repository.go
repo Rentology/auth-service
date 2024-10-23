@@ -1,12 +1,12 @@
 package repository
 
 import (
+	"auth-service/internal/domain/models"
+	"auth-service/internal/repository/postgres"
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
-	"user-service/internal/domain/models"
-	"user-service/internal/repository/postgres"
 )
 
 type AppRepository interface {

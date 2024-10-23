@@ -1,16 +1,16 @@
 package auth
 
 import (
+	"auth-service/internal/domain/models"
+	"auth-service/internal/lib/jwt"
+	"auth-service/internal/lib/logger/sl"
+	"auth-service/internal/repository/postgres"
 	"context"
 	"errors"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"log/slog"
 	"time"
-	"user-service/internal/domain/models"
-	"user-service/internal/lib/jwt"
-	"user-service/internal/lib/logger/sl"
-	"user-service/internal/repository/postgres"
 )
 
 type Auth struct {
