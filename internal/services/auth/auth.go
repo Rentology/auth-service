@@ -146,8 +146,8 @@ func (a *Auth) IsAdmin(ctx context.Context, userID int64) (bool, error) {
 
 	isAdmin, err := a.usrProvider.IsAdmin(ctx, userID)
 	if err != nil {
-		if errors.Is(err, postgres.ErrAppNotFound) {
-			log.With("user not found", sl.Err(err))
+		if errors.Is(err, postgres.ErrUserNotFound) {
+			log.Info("user not found", sl.Err(err))
 			return false, fmt.Errorf("%s: %w", op, ErrInvalidAppID)
 		}
 		log.Error("failed to check user", sl.Err(err))

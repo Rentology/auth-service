@@ -50,12 +50,24 @@ func (r *userRepository) GetUserByEmail(ctx context.Context, email string) (mode
 	err := row.Scan(&user.ID, &user.Email, &user.PassHash)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return models.User{}, fmt.Errorf("%s: %w", op, err)
+			return models.User{}, fmt.Errorf("%s: %w", op, postgres.ErrUserNotFound)
 		}
+		return models.User{}, fmt.Errorf("%s: %w", op, err)
 	}
 	return user, nil
 }
 
 func (r *userRepository) IsAdmin(ctx context.Context, userID int64) (bool, error) {
-	return true, nil
+	const op = "repository.user_repository.IsAdmin"
+	query := "SELECT is_admin  FROM users WHERE id = $1"
+	row := r.db.QueryRowContext(ctx, query, userID)
+	var isAdmin bool
+	err := row.Scan(&isAdmin)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, fmt.Errorf("%s: %w", op, postgres.ErrUserNotFound)
+		}
+		return false, fmt.Errorf("%s: %w", op, err)
+	}
+	return isAdmin, nil
 }
