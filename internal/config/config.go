@@ -12,11 +12,16 @@ type Config struct {
 	DatabaseUrl string        `yaml:"database_url" env-required:"true"`
 	TokenTTL    time.Duration `yaml:"token_ttl" env-required:"true"`
 	GRPC        GRPCConfig    `yaml:"grpc" env-required:"true"`
+	Rest        RestConfig    `yaml:"rest"`
 }
 
 type GRPCConfig struct {
 	Port    int           `yaml:"port"`
 	Timeout time.Duration `yaml:"timeout" env-default:"10s"`
+}
+
+type RestConfig struct {
+	Port int `yaml:"port"`
 }
 
 func LoadConfig() *Config {

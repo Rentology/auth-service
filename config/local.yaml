@@ -4,3 +4,5 @@ token_ttl: 1h
 grpc:
   port: 8080
   timeout: 10h
+rest:
+  port: 8081

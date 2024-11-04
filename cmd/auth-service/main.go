@@ -5,9 +5,9 @@ import (
 	"auth-service/internal/app"
 	"auth-service/internal/config"
 	"context"
+	"fmt"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -34,7 +34,7 @@ func main() {
 
 	go func() {
 		log.Info("starting REST gateway")
-		if err := runRESTGateway(strconv.Itoa(cfg.GRPC.Port)); err != nil {
+		if err := runRESTGateway(cfg, log); err != nil {
 			log.Error("failed to run REST gateway", slog.String("error", err.Error()))
 		}
 	}()
@@ -66,7 +66,7 @@ func setupLogger(env string) *slog.Logger {
 	return log
 }
 
-func runRESTGateway(grpcPort string) error {
+func runRESTGateway(cfg *config.Config, log *slog.Logger) error {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -74,10 +74,10 @@ func runRESTGateway(grpcPort string) error {
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 
-	err := pb.RegisterAuthHandlerFromEndpoint(ctx, mux, "localhost:"+grpcPort, opts)
+	err := pb.RegisterAuthHandlerFromEndpoint(ctx, mux, "localhost:"+strconv.Itoa(cfg.GRPC.Port), opts)
 	if err != nil {
 		return err
 	}
-	log.Println("REST gateway is running on port 8081")
-	return http.ListenAndServe(":8081", mux)
+	log.Info("REST gateway is running on port: " + strconv.Itoa(cfg.Rest.Port))
+	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Rest.Port), mux)
 }
