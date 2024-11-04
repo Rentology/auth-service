@@ -2,12 +2,33 @@ syntax = "proto3";
 
 package auth;
 
+import "google/api/annotation.proto";
+
 option go_package = "rentology.auth.v1;auth1";
 
 service Auth {
-  rpc Register (RegisterRequest) returns (RegisterResponse);
-  rpc Login (LoginRequest) returns (LoginResponse);
-  rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse);
+  rpc Register (RegisterRequest) returns (RegisterResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/register"
+      body: "*"
+    };
+  }
+
+  rpc Login (LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/login"
+      body: "*"
+    };
+  }
+
+  rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse) {
+    option (google.api.http) = {
+      get: "/v1/auth/isadmin"
+      additional_bindings {
+        get: "/v1/auth/isadmin/{user_id}"
+      }
+    };
+  }
 }
 
 message RegisterRequest {
@@ -19,17 +40,17 @@ message RegisterResponse {
   int64 user_id = 1;
 }
 
-message LoginRequest{
+message LoginRequest {
   string email = 1;
   string password = 2;
   int32 app_id = 3;
 }
 
-message LoginResponse{
+message LoginResponse {
   string token = 1;
 }
 
-message IsAdminRequest{
+message IsAdminRequest {
   int64 user_id = 1;
 }
 
