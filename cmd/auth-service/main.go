@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"log/slog"
 	"net/http"
@@ -78,6 +79,14 @@ func runRESTGateway(cfg *config.Config, log *slog.Logger) error {
 	if err != nil {
 		return err
 	}
+
+	corsHandler := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowCredentials: true,
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+	}).Handler(mux)
+
 	log.Info("REST gateway is running on port: " + strconv.Itoa(cfg.Rest.Port))
-	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Rest.Port), mux)
+	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Rest.Port), corsHandler)
 }

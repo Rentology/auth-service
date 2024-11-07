@@ -9,6 +9,7 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/lib/pq v1.10.9
+	github.com/rs/cors v1.11.1
 	golang.org/x/crypto v0.28.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20241021214115-324edc3d5d38
 	google.golang.org/grpc v1.67.1
