@@ -5,12 +5,14 @@ import (
 	"auth-service/internal/app"
 	"auth-service/internal/config"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"log/slog"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"os/signal"
 	"strconv"
@@ -80,12 +82,46 @@ func runRESTGateway(cfg *config.Config, log *slog.Logger) error {
 		return err
 	}
 
+	// Обработчик для перехвата и установки cookie
+	cookieHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/v1/auth/login" && r.Method == "POST" {
+			rec := httptest.NewRecorder()
+			mux.ServeHTTP(rec, r)
+
+			// Чтение тела ответа и извлечение токена
+			var loginResp pb.LoginResponse
+			if err := json.Unmarshal(rec.Body.Bytes(), &loginResp); err == nil && loginResp.Token != "" {
+				http.SetCookie(w, &http.Cookie{
+					Name:     "token",
+					Value:    loginResp.Token,
+					Path:     "/",
+					HttpOnly: true,
+					Secure:   true,
+				})
+			}
+
+			// Копируем заголовки и статус ответа из ResponseRecorder
+			for k, v := range rec.Header() {
+				w.Header()[k] = v
+			}
+			w.WriteHeader(rec.Code)
+
+			// Передаем тело ответа клиенту
+			_, err := w.Write(rec.Body.Bytes())
+			if err != nil {
+				log.Error("Error writing response body")
+			}
+		} else {
+			mux.ServeHTTP(w, r)
+		}
+	})
+
 	corsHandler := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000"},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},
-	}).Handler(mux)
+	}).Handler(cookieHandler)
 
 	log.Info("REST gateway is running on port: " + strconv.Itoa(cfg.Rest.Port))
 	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Rest.Port), corsHandler)
