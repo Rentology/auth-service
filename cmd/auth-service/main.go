@@ -75,7 +75,8 @@ func runRESTGateway(cfg *config.Config, log *slog.Logger) error {
 	defer cancel()
 
 	mux := runtime.NewServeMux()
-	opts := []grpc.DialOption{grpc.WithInsecure()}
+
+	opts := []grpc.DialOption{grpc.WithInsecure()} // todo: исправить deprecated
 
 	err := pb.RegisterAuthHandlerFromEndpoint(ctx, mux, "localhost:"+strconv.Itoa(cfg.GRPC.Port), opts)
 	if err != nil {
