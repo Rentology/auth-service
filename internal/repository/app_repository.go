@@ -33,5 +33,5 @@ func (r *appRepository) App(ctx context.Context, appID int) (models.App, error) 
 		}
 		return models.App{}, fmt.Errorf("%s: %w", op, err)
 	}
-	return models.App{}, nil
+	return app, nil
 }
