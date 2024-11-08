@@ -85,7 +85,7 @@ func runRESTGateway(cfg *config.Config, log *slog.Logger) error {
 
 	// Обработчик для перехвата и установки cookie
 	cookieHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/v1/auth/login" && r.Method == "POST" {
+		if r.URL.Path == "/api/v1/auth/login" && r.Method == "POST" {
 			rec := httptest.NewRecorder()
 			mux.ServeHTTP(rec, r)
 

@@ -2,7 +2,7 @@ env: "local"
 database_url: "postgres://postgres:123@localhost:5432/postgres?sslmode=disable"
 token_ttl: 1h
 grpc:
-  port: 8080
+  port: 9000
   timeout: 10h
 rest:
   port: 8081

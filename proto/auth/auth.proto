@@ -9,23 +9,23 @@ option go_package = "rentology.auth.v1;auth1";
 service Auth {
   rpc Register (RegisterRequest) returns (RegisterResponse) {
     option (google.api.http) = {
-      post: "/v1/auth/register"
+      post: "/api/v1/auth/register"
       body: "*"
     };
   }
 
   rpc Login (LoginRequest) returns (LoginResponse) {
     option (google.api.http) = {
-      post: "/v1/auth/login"
+      post: "/api/v1/auth/login"
       body: "*"
     };
   }
 
   rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse) {
     option (google.api.http) = {
-      get: "/v1/auth/isadmin"
+      get: "/api/v1/auth/isadmin"
       additional_bindings {
-        get: "/v1/auth/isadmin/{user_id}"
+        get: "/api/v1/auth/isadmin/{user_id}"
       }
     };
   }
