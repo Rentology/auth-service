@@ -17,6 +17,7 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 )
 
 const (
@@ -83,13 +84,13 @@ func runRESTGateway(cfg *config.Config, log *slog.Logger) error {
 		return err
 	}
 
-	// Обработчик для перехвата и установки cookie
+	// Обработчик для установки и удаления cookie
 	cookieHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/api/v1/auth/login" && r.Method == "POST" {
+			// Логика установки cookie при входе
 			rec := httptest.NewRecorder()
 			mux.ServeHTTP(rec, r)
 
-			// Чтение тела ответа и извлечение токена
 			var loginResp pb.LoginResponse
 			if err := json.Unmarshal(rec.Body.Bytes(), &loginResp); err == nil && loginResp.Token != "" {
 				http.SetCookie(w, &http.Cookie{
@@ -101,16 +102,29 @@ func runRESTGateway(cfg *config.Config, log *slog.Logger) error {
 				})
 			}
 
-			// Копируем заголовки и статус ответа из ResponseRecorder
 			for k, v := range rec.Header() {
 				w.Header()[k] = v
 			}
 			w.WriteHeader(rec.Code)
-
-			// Передаем тело ответа клиенту
 			_, err := w.Write(rec.Body.Bytes())
 			if err != nil {
 				log.Error("Error writing response body")
+			}
+		} else if r.URL.Path == "/api/v1/auth/logout" && r.Method == "DELETE" {
+			// Логика удаления cookie при выходе
+			http.SetCookie(w, &http.Cookie{
+				Name:     "token",
+				Value:    "",
+				Path:     "/",
+				HttpOnly: true,
+				Secure:   true,
+				Expires:  time.Unix(0, 0), // Устанавливаем срок действия в прошлое
+				MaxAge:   -1,
+			})
+			w.WriteHeader(http.StatusOK)
+			_, err := w.Write([]byte(`{"message": "Logged out successfully"}`))
+			if err != nil {
+				log.Error("Error writing logout response")
 			}
 		} else {
 			mux.ServeHTTP(w, r)
