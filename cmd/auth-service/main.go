@@ -34,6 +34,13 @@ func main() {
 
 	application := app.New(log, cfg.GRPC.Port, cfg.DatabaseUrl, cfg.TokenTTL)
 
+	defer func(application *app.App) {
+		err := application.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(application)
+
 	go application.GRPCSrv.MustRun()
 
 	go func() {

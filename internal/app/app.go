@@ -11,7 +11,9 @@ import (
 )
 
 type App struct {
-	GRPCSrv *grpcapp.App
+	GRPCSrv  *grpcapp.App
+	Broker   *broker.Broker
+	Producer *broker.Producer
 }
 
 func New(
@@ -38,6 +40,21 @@ func New(
 
 	grpcApp := grpcapp.New(log, authService, grpcPort)
 	return &App{
-		GRPCSrv: grpcApp,
+		GRPCSrv:  grpcApp,
+		Broker:   b,
+		Producer: producer,
 	}
+}
+
+// Close освобождает все ресурсы
+func (a *App) Close() error {
+	// Закрываем producer
+	if err := a.Producer.Close(); err != nil {
+		return err
+	}
+	// Закрываем broker
+	if err := a.Broker.Close(); err != nil {
+		return err
+	}
+	return nil
 }
