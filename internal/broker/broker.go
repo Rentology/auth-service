@@ -2,12 +2,10 @@ package broker
 
 import (
 	amqp "github.com/rabbitmq/amqp091-go"
-	"log/slog"
 )
 
 type Broker struct {
 	conn *amqp.Connection
-	log  *slog.Logger
 }
 
 func NewBroker(url string) (*Broker, error) {
