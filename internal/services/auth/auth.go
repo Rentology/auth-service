@@ -6,6 +6,7 @@ import (
 	"auth-service/internal/lib/logger/sl"
 	"auth-service/internal/repository/postgres"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
@@ -18,7 +19,13 @@ type Auth struct {
 	usrSaver    UserSaver
 	usrProvider UserProvider
 	appProvider AppProvider
+	producer    Producer
 	tokenTTL    time.Duration
+}
+
+type UserProvider interface {
+	GetUserByEmail(ctx context.Context, email string) (models.User, error)
+	IsAdmin(ctx context.Context, userID int64) (bool, error)
 }
 
 type UserSaver interface {
@@ -29,13 +36,12 @@ type UserSaver interface {
 	) (uid int64, err error)
 }
 
-type UserProvider interface {
-	GetUserByEmail(ctx context.Context, email string) (models.User, error)
-	IsAdmin(ctx context.Context, userID int64) (bool, error)
-}
-
 type AppProvider interface {
 	App(ctx context.Context, appID int) (models.App, error)
+}
+
+type Producer interface {
+	Publish(body []byte) error
 }
 
 var (
@@ -49,6 +55,7 @@ func New(
 	userSaver UserSaver,
 	userProvider UserProvider,
 	appProvider AppProvider,
+	producer Producer,
 	tokenTTL time.Duration,
 ) *Auth {
 	return &Auth{
@@ -56,6 +63,7 @@ func New(
 		usrProvider: userProvider,
 		log:         log,
 		appProvider: appProvider,
+		producer:    producer,
 		tokenTTL:    tokenTTL,
 	}
 }
@@ -128,6 +136,25 @@ func (a *Auth) RegisterNewUser(ctx context.Context, email string, password strin
 		log.Error("failed to generate password hash", sl.Err(err))
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
+
+	event := map[string]interface{}{
+		"id":    id,
+		"email": email,
+	}
+
+	body, err := json.Marshal(event)
+
+	if err != nil {
+		return 0, err
+	}
+
+	err = a.producer.Publish(body)
+
+	if err != nil {
+		log.Error("failed to send event", "event", err)
+		return 0, err
+	}
+
 	log.Info("success")
 
 	return id, nil
