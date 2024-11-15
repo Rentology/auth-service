@@ -8,11 +8,12 @@ import (
 )
 
 type Config struct {
-	Env         string        `yaml:"env" env-default:"local"`
-	DatabaseUrl string        `yaml:"database_url" env-required:"true"`
-	TokenTTL    time.Duration `yaml:"token_ttl" env-required:"true"`
-	GRPC        GRPCConfig    `yaml:"grpc" env-required:"true"`
-	Rest        RestConfig    `yaml:"rest"`
+	Env         string         `yaml:"env" env-default:"local"`
+	DatabaseUrl string         `yaml:"database_url" env-required:"true"`
+	TokenTTL    time.Duration  `yaml:"token_ttl" env-required:"true"`
+	GRPC        GRPCConfig     `yaml:"grpc" env-required:"true"`
+	Rest        RestConfig     `yaml:"rest"`
+	RabbitMQ    RabbitMQConfig `yaml:"rabbit_mq"`
 }
 
 type GRPCConfig struct {
@@ -22,6 +23,11 @@ type GRPCConfig struct {
 
 type RestConfig struct {
 	Port int `yaml:"port"`
+}
+
+type RabbitMQConfig struct {
+	Url       string `yaml:"url"`
+	QueueName string `yaml:"queue_name"`
 }
 
 func LoadConfig() *Config {

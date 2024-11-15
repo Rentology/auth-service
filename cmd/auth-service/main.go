@@ -32,7 +32,7 @@ func main() {
 	log.Info("starting auth-service", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
 
-	application := app.New(log, cfg.GRPC.Port, cfg.DatabaseUrl, cfg.TokenTTL)
+	application := app.New(log, cfg.GRPC.Port, cfg.DatabaseUrl, cfg.RabbitMQ.Url, cfg.RabbitMQ.QueueName, cfg.TokenTTL)
 
 	defer func(application *app.App) {
 		err := application.Close()

@@ -20,6 +20,8 @@ func New(
 	log *slog.Logger,
 	grpcPort int,
 	databaseUrl string,
+	rabbitMqUrl string,
+	queueName string,
 	tokenTTL time.Duration,
 ) *App {
 	db, err := postgres.New(databaseUrl)
@@ -28,11 +30,11 @@ func New(
 	}
 	userRepository := repository.NewUserRepository(db)
 	appRepository := repository.NewAppRepository(db)
-	b, err := broker.NewBroker("amqp://guest:guest@localhost:5672/")
+	b, err := broker.NewBroker(rabbitMqUrl)
 	if err != nil {
 		panic(err)
 	}
-	producer, err := broker.NewProducer(b, "test")
+	producer, err := broker.NewProducer(b, queueName)
 	if err != nil {
 		panic(err)
 	}

@@ -6,3 +6,6 @@ grpc:
   timeout: 10h
 rest:
   port: 8081
+rabbit_mq:
+  url: amqp://guest:guest@localhost:5672/
+  queue_name: user_queue
