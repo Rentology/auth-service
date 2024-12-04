@@ -5,7 +5,7 @@ grpc:
   port: 9000
   timeout: 10h
 rest:
-  port: 8081
+  port: 8080
 rabbit_mq:
   url: amqp://guest:guest@rabbitmq:5672/
   queue_name: user_queue
