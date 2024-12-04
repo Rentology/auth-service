@@ -15,8 +15,11 @@ RUN apk add --no-cache make protobuf-dev curl bash unzip
 # Устанавливаем protoc через go get
 RUN go get google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1 \
     && go get google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.3.0
-RUN make generate
 
+ENV PATH=$PATH:/go/bin
+
+
+RUN make generate
 
 # Компиляция приложения
 RUN go build -o /app/main ./cmd/auth-service
