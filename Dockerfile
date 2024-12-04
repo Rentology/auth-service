@@ -12,7 +12,7 @@ RUN go mod download
 # Устанавливаем необходимые пакеты для работы с proto
 RUN apk add --no-cache make protobuf-dev curl bash unzip
 
-RUN curl --location --silent -o protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v29.0/protoc-29.0-osx-aarch_64.zip && \
+RUN curl --location --silent -o protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v29.0/protoc-29.0-linux-aarch_64.zip && \
     unzip protoc.zip -d /usr/local/ && \
     rm -fr protoc.zip
 
