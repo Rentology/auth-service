@@ -9,12 +9,20 @@ COPY . .
 # Загружаем зависимости
 RUN go mod download
 
-RUN apk add --no-cache make protobuf-dev
+# Устанавливаем необходимые пакеты и утилиты для генерации .proto файлов
+RUN apk add --no-cache make protobuf-dev curl bash
+
+# Устанавливаем protoc и необходимые плагины
+RUN curl -sSL https://github.com/protocolbuffers/protobuf/releases/download/v21.9/protoc-21.9-linux-x86_64.zip -o protoc.zip \
+    && unzip protoc.zip -d /usr/local \
+    && rm protoc.zip
+
+# Устанавливаем protoc-gen-go и protoc-gen-go-grpc
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1 \
+    && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.3.0
 
 RUN make generate
 
-# Устанавливаем make, если его нет
-RUN apk add --no-cache make
 
 # Компиляция приложения
 RUN go build -o /app/main ./cmd/auth-service
