@@ -14,7 +14,7 @@ RUN apk add --no-cache make protobuf-dev curl bash unzip
 
 RUN apt-get update && \
     apt-get install -y unzip=6.0-26+deb11u1 && \
-    curl --location --silent -o protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/protoc-3.19.4-linux-x86_64.zip && \
+    curl --location --silent -o protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v29.0/protoc-29.0-osx-aarch_64.zip && \
     unzip protoc.zip -d /usr/local/ && \
     rm -fr protoc.zip
 
