@@ -12,18 +12,17 @@ RUN go mod download
 # Устанавливаем необходимые пакеты для работы с proto
 RUN apk add --no-cache make protobuf-dev curl bash unzip
 
-RUN apt-get update && \
-    apt-get install -y unzip=6.0-26+deb11u1 && \
-    curl --location --silent -o protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v29.0/protoc-29.0-osx-aarch_64.zip && \
+RUN curl --location --silent -o protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v29.0/protoc-29.0-osx-aarch_64.zip && \
     unzip protoc.zip -d /usr/local/ && \
     rm -fr protoc.zip
 
+# Установка Go плагинов для protoc
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1 && \
-        go install github.com/twitchtv/twirp/protoc-gen-twirp@v8.1.3+incompatible && \
-        go install github.com/github/twirp-ruby/protoc-gen-twirp_ruby@v1.10.0 && \
-        go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 
+# Добавьте Go бинарники в PATH
 ENV PATH=$PATH:/go/bin
+
 
 
 RUN make generate
