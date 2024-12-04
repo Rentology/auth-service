@@ -138,8 +138,13 @@ func runRESTGateway(cfg *config.Config, log *slog.Logger) error {
 		}
 	})
 
+	allowedOrigins := "http://localhost:3000"
+	if cfg.Env == "prod" {
+		allowedOrigins = "http://localhost:80"
+	}
+
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:80"},
+		AllowedOrigins:   []string{allowedOrigins},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},
