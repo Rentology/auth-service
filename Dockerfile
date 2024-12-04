@@ -18,7 +18,9 @@ RUN curl --location --silent -o protoc.zip https://github.com/protocolbuffers/pr
 
 # Установка Go плагинов для protoc
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1 && \
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2 && \
+    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.16.0
+
 
 # Добавьте Go бинарники в PATH
 ENV PATH=$PATH:/go/bin
