@@ -124,7 +124,6 @@ func runRESTGateway(cfg *config.Config, log *slog.Logger) error {
 				Value:    "",
 				Path:     "/",
 				HttpOnly: true,
-				Secure:   true,
 				Expires:  time.Unix(0, 0), // Устанавливаем срок действия в прошлое
 				MaxAge:   -1,
 			})
