@@ -105,7 +105,6 @@ func runRESTGateway(cfg *config.Config, log *slog.Logger) error {
 					Value:    loginResp.Token,
 					Path:     "/",
 					HttpOnly: true,
-					Secure:   true,
 				})
 			}
 
@@ -124,7 +123,6 @@ func runRESTGateway(cfg *config.Config, log *slog.Logger) error {
 				Value:    "",
 				Path:     "/",
 				HttpOnly: true,
-				Secure:   false,
 				Expires:  time.Unix(0, 0), // Устанавливаем срок действия в прошлое
 				MaxAge:   -1,
 			})
